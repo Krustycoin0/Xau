@@ -1,0 +1,134 @@
+/* Reset degli stili predefiniti del browser */
+body, h1, h2, h3, h4, h5, h6, p, ul, li, a, header, main, footer {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    list-style: none; /* Rimuove i pallini dagli elenchi */
+}
+
+body {
+    font-family: 'Arial', sans-serif; /* Imposta il font */
+    line-height: 1.6;
+    color: #333; /* Colore di testo principale */
+    background-color: #f4f4f4; /* Sfondo generale */
+}
+
+/* Stili per l'header */
+header {
+    background-color: #3498db; /* Colore di sfondo dell'header */
+    color: #fff; /* Colore del testo dell'header */
+    padding: 1rem 0; /* Padding verticale */
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.5rem; /* Dimensione del titolo */
+    margin-bottom: 0.5rem; /* Margine sotto il titolo */
+}
+
+header p {
+    font-size: 1.1rem; /* Dimensione del sottotitolo */
+}
+
+/* Stili per il main */
+main {
+    padding: 2rem; /* Padding attorno al contenuto */
+    max-width: 900px; /* Larghezza massima del contenuto */
+    margin: 20px auto; /* Margini laterali e centraggio */
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+section {
+    margin-bottom: 2rem; /* Margine tra le sezioni */
+}
+
+section h2 {
+    font-size: 2rem;
+    color: #3498db;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+section p {
+    margin-bottom: 1rem;
+}
+
+section a {
+    display: inline-block;
+    background-color: #3498db;
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+section a:hover {
+    background-color: #2980b9;
+}
+
+/* Stili per il footer */
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Stili per responsività */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+    main {
+        padding: 1rem;
+        margin: 10px;
+    }
+    section h2 {
+        font-size: 1.6rem;
+    }
+}
+
+/* Stili per i segnali (esempio) */
+.segnali-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.segnali-table th, .segnali-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.segnali-table th {
+    background-color: #f2f2f2;
+}
+
+/* Stili per le testimonianze */
+.testimonianza {
+    border: 1px solid #ddd;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.testimonianza p {
+    font-style: italic;
+}
+
+.testimonianza cite {
+    display: block;
+    margin-top: 0.5rem;
+    text-align: right;
+}
