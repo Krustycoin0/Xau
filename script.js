@@ -1,4 +1,4 @@
-const API_KEY = ''; // Inserisci la tua API key qui!!!
+const API_KEY = 'CM210I4ASAM1JF3M'; // Inserisci la tua API key qui!!!
 const SYMBOL = 'XAUUSD'; // Simbolo di XAU/USD
 const TIME_PERIOD = 5; // Periodo per le medie mobili e RSI
 const TAKE_PROFIT_PERCENT = 0.02; // 2% take profit
