@@ -1,5 +1,5 @@
-const API_KEY = 'BOP6RHX94ZZOCW3Z'; // Inserisci la tua API key qui!!!
-const SYMBOL = 'XAUUSD'; // Simbolo di XAU/USD
+const API_KEY = ''; // Inserisci la tua API key di Finnhub qui!!!
+const SYMBOL = 'XAU'; // Simbolo di XAU (Oro) per Finnhub
 const TIME_PERIOD = 20; // Periodo per le medie mobili e RSI
 const TAKE_PROFIT_PERCENT = 0.02; // 2% take profit
 const STOP_LOSS_PERCENT = 0.01; // 1% stop loss
@@ -7,10 +7,12 @@ const UPDATE_INTERVAL = 120000; // intervallo di aggiornamento in millisecondi (
 
 let chart; // Variabile globale per il grafico
 
-// Funzione per ottenere i dati da Alpha Vantage
+// Funzione per ottenere i dati da Finnhub
 async function getGoldData() {
-   console.log("getGoldData: Inizio della funzione");
-    const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=XAUUSD&apikey=${API_KEY}`;
+    console.log("getGoldData: Inizio della funzione");
+    const now = Math.floor(Date.now() / 1000); // Timestamp attuale in secondi
+    const past = now - (86400 * 365); // Un anno fa
+    const url = `https://finnhub.io/api/v1/stock/candle?symbol=${SYMBOL}&resolution=D&from=${past}&to=${now}&token=${API_KEY}`;
 
     try {
         console.log("getGoldData: Eseguo la chiamata API a: ", url);
@@ -20,8 +22,8 @@ async function getGoldData() {
              return null;
          }
         const data = await response.json();
-       console.log("getGoldData: Dati API ricevuti:", data);
-         if (!data) {
+        console.log("getGoldData: Dati API ricevuti:", data);
+        if (!data) {
             console.error("getGoldData: Errore: i dati API sono nulli.");
               return null;
         }
@@ -29,25 +31,26 @@ async function getGoldData() {
             console.error("getGoldData: Errore: i dati API sono vuoti.");
              return null;
        }
-        if (!data["Time Series (Daily)"]){
-           console.error("getGoldData: Errore: i dati API non hanno la chiave 'Time Series (Daily)'");
+         if (!data.c){
+           console.error("getGoldData: Errore: i dati API non hanno la chiave 'c'");
           return null;
         }
-          console.log("getGoldData: Chiamata API riuscita.");
-        return data;
+        console.log("getGoldData: Chiamata API riuscita.");
+       return data;
+
     } catch (error) {
-         console.error("getGoldData: Errore nel recupero dei dati da Alpha Vantage:", error);
+        console.error("getGoldData: Errore nel recupero dei dati da Finnhub:", error);
         return null;
     }
 }
 
 // Funzione per calcolare le medie mobili
 function calculateSMA(data, timePeriod) {
-     if(!data || !data["Time Series (Daily)"]) {
+    if(!data || !data.c) {
           console.error("calculateSMA: Errore: i dati necessari per l'SMA non sono stati restituiti dall'API");
            return null;
     }
-   const dailyPrices = Object.values(data["Time Series (Daily)"]).map(item => parseFloat(item["4. close"])).reverse();
+  const dailyPrices = data.c.slice().reverse();
     if (dailyPrices.length < timePeriod) {
        console.warn("calculateSMA: Avviso: Dati insufficienti per calcolare l'SMA.");
         return null;
@@ -62,11 +65,11 @@ function calculateSMA(data, timePeriod) {
 
 // Funzione per calcolare l'RSI
 function calculateRSI(data, timePeriod) {
-      if(!data || !data["Time Series (Daily)"]){
+     if(!data || !data.c){
          console.error("calculateRSI: Errore: i dati necessari per l'RSI non sono stati restituiti dall'API");
         return null;
       }
-    const dailyPrices = Object.values(data["Time Series (Daily)"]).map(item => parseFloat(item["4. close"])).reverse();
+     const dailyPrices = data.c.slice().reverse();
     if (dailyPrices.length < timePeriod + 1) {
         console.warn("calculateRSI: Avviso: Dati insufficienti per calcolare l'RSI.");
          return null;
@@ -103,11 +106,11 @@ function calculateRSI(data, timePeriod) {
 
 // Funzione per calcolare le bande di Bollinger
 function calculateBollingerBands(data, timePeriod) {
-   if(!data || !data["Time Series (Daily)"]) {
+    if(!data || !data.c) {
        console.error("calculateBollingerBands: Errore: i dati necessari per le bande di Bollinger non sono stati restituiti dall'API");
          return null;
      }
-   const dailyPrices = Object.values(data["Time Series (Daily)"]).map(item => parseFloat(item["4. close"])).reverse();
+   const dailyPrices = data.c.slice().reverse();
     if (dailyPrices.length < timePeriod) {
       console.warn("calculateBollingerBands: Avviso: Dati insufficienti per calcolare le bande di Bollinger.");
        return null;
@@ -128,11 +131,11 @@ function calculateBollingerBands(data, timePeriod) {
 
 // Funzione per calcolare il MACD
 function calculateMACD(data) {
-      if(!data || !data["Time Series (Daily)"]) {
-          console.error("calculateMACD: Errore: i dati necessari per il MACD non sono stati restituiti dall'API");
-          return null;
-      }
-     const dailyPrices = Object.values(data["Time Series (Daily)"]).map(item => parseFloat(item["4. close"])).reverse();
+    if(!data || !data.c) {
+        console.error("calculateMACD: Errore: i dati necessari per il MACD non sono stati restituiti dall'API");
+        return null;
+    }
+     const dailyPrices = data.c.slice().reverse();
     if (dailyPrices.length < 26) {
          console.warn("calculateMACD: Avviso: Dati insufficienti per calcolare il MACD.");
           return null;
@@ -183,11 +186,11 @@ function generateSignal(price, sma, rsi, macd, fundamentalSentiment, bollingerBa
 // Funzione per visualizzare il grafico
 async function aggiornaGrafico(data, signal) {
   console.log("aggiornaGrafico: Inizio della funzione.");
-     if(!data || !data["Time Series (Daily)"]) {
+    if(!data || !data.c) {
          console.error("aggiornaGrafico: Errore: i dati necessari per visualizzare il grafico non sono stati restituiti dall'API");
          return null;
    }
-    const dailyPrices = Object.values(data["Time Series (Daily)"]).map(item => parseFloat(item["4. close"])).reverse();
+    const dailyPrices = data.c.slice().reverse();
  const chartContainer = document.getElementById('chartContainer');
     if (!chartContainer) {
        console.error("aggiornaGrafico: Errore: Elemento con ID 'chartContainer' non trovato.");
@@ -299,7 +302,7 @@ function calculateResistance(prices){
 
 // Funzione per aggiornare la pagina dei segnali
 async function aggiornaSegnaliPagina() {
-   const data = await getGoldData();
+  const data = await getGoldData();
       if(!data) {
           console.error("aggiornaSegnaliPagina: Errore: dati API nulli, impossibile aggiornare la pagina.");
           const segnaliContainer = document.getElementById('segnali-container');
@@ -308,7 +311,7 @@ async function aggiornaSegnaliPagina() {
          }
            return;
     }
- const dailyPrices = Object.values(data["Time Series (Daily)"]).map(item => parseFloat(item["4. close"])).reverse();
+ const dailyPrices = data.c.slice().reverse();
    const sma = calculateSMA(data, TIME_PERIOD);
  const rsi = calculateRSI(data, TIME_PERIOD);
     const bollingerBands = calculateBollingerBands(data, TIME_PERIOD);
