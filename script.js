@@ -1,4 +1,4 @@
-const API_KEY = ''; // Inserisci la tua API key di Finnhub qui!!!
+const API_KEY = 'ctg88p9r01qn78n3a7i0ctg88p9r01qn78n3a7ig'; // Inserisci la tua API key di Finnhub qui!!!
 const SYMBOL = 'XAU'; // Simbolo di XAU (Oro) per Finnhub
 const TIME_PERIOD = 20; // Periodo per le medie mobili e RSI
 const TAKE_PROFIT_PERCENT = 0.02; // 2% take profit
