@@ -4,34 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trading Bot XAUUSD</title>
-      <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     <style>
         body {
-            font-family: sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 20px;
+            background-color: #f4f7f9;
+            color: #333;
+        }
+        h1, h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
         }
         #chartContainer {
-            width: 600px;
-            height: 300px;
-            border: 1px solid #ccc;
-            margin-bottom: 20px;
+            width: 80%;
+            max-width: 800px;
+            height: 400px;
+            border: 1px solid #ddd;
+            margin: 20px auto;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         .segnali-table {
-            width: 100%;
+            width: 80%;
+            max-width: 800px;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin: 20px auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background-color: white;
         }
         .segnali-table th, .segnali-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
+            border: 1px solid #e0e0e0;
+            padding: 12px;
+            text-align: center;
         }
         .segnali-table th {
-            background-color: #f2f2f2;
+             background-color: #4CAF50; /* Verde */
+            color: white;
+            font-weight: bold;
         }
-        .segnali-table tbody tr:nth-child(odd) {
-            background-color: #f9f9f9;
+          .segnali-table tbody tr:nth-child(odd) {
+            background-color: #f9f9f9; /* Grigio chiaro */
         }
+         .segnali-table tbody tr:hover {
+          background-color: #e8f5e9; /* Verde chiaro al passaggio del mouse */
+        }
+        #segnali-container {
+            text-align: center;
+              margin-bottom: 20px;
+             padding: 15px;
+            background-color: #f9f9f9; /* Grigio chiaro */
+           border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+           width: 80%;
+            max-width: 800px;
+            margin: 20px auto;
+        }
+            #segnali-container p {
+                font-style: italic;
+                color: #777;
+            }
     </style>
 </head>
 <body>
@@ -43,9 +76,9 @@
     <div id="segnali-container">
         <p>Nessun segnale generato al momento.</p>
     </div>
-    
+
     <script>
-       // Incolla qui tutto il codice JavaScript che ti ho dato prima
+        // Incolla qui tutto il codice JavaScript che ti ho dato prima
 const API_KEY = 'cjlgf2pr01qi9vru2ed0cjlgf2pr01qi9vru2edg'; // Inserisci la tua API key di Finnhub qui!!!
 const SYMBOL = 'XAU'; // Simbolo di XAU (Oro) per Finnhub
 const TIME_PERIOD = 20; // Periodo per le medie mobili e RSI
@@ -251,8 +284,25 @@ async function aggiornaGrafico(data, signal) {
      chart.remove(); // Rimuove il grafico precedente.
    }
       console.log("aggiornaGrafico: Creo il grafico.");
-    chart = LightweightCharts.createChart(chartContainer, { width: 600, height: 300});
-  const lineSeries = chart.addLineSeries();
+     chart = LightweightCharts.createChart(chartContainer, { width: 800, height: 400,
+            layout: {
+                backgroundColor: '#fff',
+                textColor: '#333',
+            },
+            grid: {
+                vertLines: {
+                    color: '#e0e0e0',
+                },
+                horzLines: {
+                    color: '#e0e0e0',
+                },
+            },
+        });
+    
+  const lineSeries = chart.addLineSeries({
+            color: '#2980b9',
+            lineWidth: 2
+        });
   const chartData = dailyPrices.map((price, index) => ({ time: index+1, value: price}));
    lineSeries.setData(chartData);
     console.log("aggiornaGrafico: Aggiungo i livelli di supporto e resistenza.");
@@ -268,11 +318,11 @@ async function aggiornaGrafico(data, signal) {
        calculateResistance(dailyPrices)+ 0.0015//esempio
   ]
     supportLevels.forEach(level =>{
-        const supportLine = chart.addLineSeries({color:'green', lineWidth: 1})
+        const supportLine = chart.addLineSeries({color:'green', lineWidth: 1, lineStyle: 1})
        supportLine.setData(dailyPrices.map((value,index) =>({time: index+1, value: level})))
    });
     resistanceLevels.forEach(level =>{
-        const resistanceLine = chart.addLineSeries({color:'red', lineWidth: 1})
+        const resistanceLine = chart.addLineSeries({color:'red', lineWidth: 1, lineStyle: 1})
           resistanceLine.setData(dailyPrices.map((value,index) =>({time: index+1, value: level})))
   });
 
@@ -280,10 +330,10 @@ async function aggiornaGrafico(data, signal) {
  const bollingerBands = calculateBollingerBands(data, TIME_PERIOD);
     if(bollingerBands){
         console.log("aggiornaGrafico: Aggiungo le bande di bollinger.");
-      const upperBollingerLine = chart.addLineSeries({color:'blue', lineWidth: 1})
+      const upperBollingerLine = chart.addLineSeries({color:'rgba(144, 238, 144, 0.5)', lineWidth: 1, lineStyle: 2})
      upperBollingerLine.setData(dailyPrices.map((value,index) =>({time:index+1, value: bollingerBands.upper})))
 
-     const lowerBollingerLine = chart.addLineSeries({color:'blue', lineWidth: 1})
+     const lowerBollingerLine = chart.addLineSeries({color:'rgba(144, 238, 144, 0.5)', lineWidth: 1, lineStyle: 2})
         lowerBollingerLine.setData(dailyPrices.map((value,index) =>({time:index+1, value: bollingerBands.lower})))
   }
 
@@ -291,25 +341,25 @@ async function aggiornaGrafico(data, signal) {
  const rsi = calculateRSI(data, TIME_PERIOD)
     if (rsi){
         console.log("aggiornaGrafico: Aggiungo l'RSI.");
-         const rsiSeries = chart.addLineSeries({ color: 'orange', lineWidth: 1 });
-         rsiSeries.setData(dailyPrices.map((value, index) => ({ time: index + 1, value: rsi})));
+        const rsiSeries = chart.addLineSeries({ color: 'orange', lineWidth: 1, lineStyle: 1 });
+        rsiSeries.setData(dailyPrices.map((value, index) => ({ time: index + 1, value: rsi})));
       }
 
 //Aggiungi Macd
 const macd = calculateMACD(data);
     if(macd){
        console.log("aggiornaGrafico: Aggiungo il MACD.");
-        const macdSeries = chart.addLineSeries({ color: 'purple', lineWidth: 1 });
+        const macdSeries = chart.addLineSeries({ color: 'purple', lineWidth: 1, lineStyle: 1});
           macdSeries.setData(dailyPrices.map((value, index) => ({ time: index+1, value: macd.macd})));
 
-        const signalSeries = chart.addLineSeries({ color: 'gray', lineWidth: 1 });
+        const signalSeries = chart.addLineSeries({ color: 'gray', lineWidth: 1, lineStyle: 1});
           signalSeries.setData(dailyPrices.map((value, index) => ({ time: index+1, value: macd.signal})));
     }
   //Aggiungi le ritracciamenti di fibonacci
  const fiboLevels = calculateFibonacciRetracements(dailyPrices)
       console.log("aggiornaGrafico: Aggiungo i ritracciamenti di Fibonacci.");
         fiboLevels.forEach(level =>{
-         const fiboLine = chart.addLineSeries({color:'grey', lineWidth: 0.5})
+         const fiboLine = chart.addLineSeries({color:'grey', lineWidth: 0.5, lineStyle: 3})
         fiboLine.setData(dailyPrices.map((value,index) =>({time:index+1, value: level})))
     });
 
