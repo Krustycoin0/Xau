@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Segnali XAU/USD</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
 </head>
 <body>
     <header>
@@ -15,8 +15,9 @@
         <section>
             <h2>Segnali di Trading</h2>
             <p>Qui troverai i segnali di trading su XAU/USD in tempo reale.</p>
-             <canvas id="myChart" width="400" height="200"></canvas>
-            <div id="segnali-container"></div>
+            <!-- Container per il grafico -->
+           <div id="chartContainer"></div>
+           <div id="segnali-container"></div>
         </section>
     </main>
     <footer>
