@@ -5,29 +5,139 @@
     <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@3.5.0/dist/lightweight-charts.min.js"></script>
     <style>
         body {
-            font-family: sans-serif;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f9; /* Sfondo leggermente grigio */
+            color: #333;
         }
-        #chartContainer {
-            width: 900px;
-            height: 450px;
+
+        .container {
+            width: 90%; /* Rende il contenitore adattabile */
+            max-width: 1200px; /* Larghezza massima per evitare che diventi troppo grande */
             margin: 20px auto;
+            padding: 20px;
+             background-color: #fff;
+            border-radius: 8px;
+           box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
         }
+          h1 {
+             color: #3498db;
+              text-align: center;
+             margin-bottom: 20px;
+             margin-top: 0;
+         }
+
+         #chartContainer {
+            width: 100%;
+            height: 450px;
+            margin-bottom: 20px;
+           border: 1px solid #ddd;
+            border-radius: 8px;
+          
+        }
+
+        .segnali-container {
+            margin-top: 20px;
+        }
+        .segnali-container h2 {
+            color: #3498db; /* Testo del titolo */
+            margin-bottom: 10px;
+        }
+
         .segnali-table {
             border-collapse: collapse;
             width: 100%;
-            margin: 20px auto;
+            margin-top: 10px;
         }
+
         .segnali-table th, .segnali-table td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px;
             text-align: left;
         }
+         .segnali-table th {
+             background-color: #f2f2f2;
+        }
+       .error-message {
+           color: #e74c3c; /* Rosso per errore */
+           text-align: center;
+           margin-top: 20px;
+       }
+        .retry-button {
+            display: block; /* Rende il bottone un blocco */
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+
+       }
+
+       .retry-button:hover {
+            background-color: #2980b9;
+       }
+       .no-signals {
+           text-align: center;
+           margin-top: 20px;
+           font-style: italic;
+           color: #777;
+       }
     </style>
 </head>
 <body>
-    <h1>Analisi Oro</h1>
-    <div id="chartContainer"></div>
-    <div id="segnali-container"></div>
+    <div class="container">
+       <h1>Analisi Oro</h1>
+        <div id="chartContainer"></div>
+        <div class="segnali-container">
+            <h2>Segnali di Trading</h2>
+            <div id="segnali-content">
+                <p class="error-message" style="display:none">Impossibile caricare i dati al momento. Riprova più tardi.</p>
+                <a href="#" class="retry-button" style="display:none" onclick="aggiornaSegnaliPagina(); return false;">Riprova</a>
+                 <p class="no-signals" >Nessun segnale generato al momento.</p>
+            </div>
+        </div>
+    </div>
 
-    <script src="script.js"></script> </body>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            aggiornaSegnaliPagina();
+            setInterval(aggiornaSegnaliPagina, UPDATE_INTERVAL);
+
+            // Gestisci la visualizzazione del messaggio di errore e del pulsante di riprova.
+            const segnaliContent = document.getElementById('segnali-content');
+            const errorMessage = segnaliContent.querySelector('.error-message');
+            const retryButton = segnaliContent.querySelector('.retry-button');
+            const noSignalsMessage = segnaliContent.querySelector('.no-signals')
+
+            // Modifica la funzione aggiornaSegnaliPagina per gestire lo stato di errore.
+             const originalAggiornaSegnaliPagina = aggiornaSegnaliPagina;
+            aggiornaSegnaliPagina = async function () {
+              const data = await getGoldData();
+              if (!data) {
+                errorMessage.style.display = 'block';
+                retryButton.style.display = 'inline-block';
+                noSignalsMessage.style.display = 'none'
+
+                const segnaliContainer = document.getElementById('segnali-container');
+                 if (segnaliContainer) {
+                        segnaliContainer.innerHTML = `<h2>Segnali di Trading</h2><p class="error-message">Nessun segnale generato al momento (errore API)</p> <a href="#" class="retry-button" onclick="aggiornaSegnaliPagina(); return false;">Riprova</a>`;
+                   }
+              }
+              else{
+               errorMessage.style.display = 'none';
+               retryButton.style.display = 'none';
+                noSignalsMessage.style.display = 'none'
+                originalAggiornaSegnaliPagina();
+             }
+           }
+        });
+    </script>
+</body>
 </html>
