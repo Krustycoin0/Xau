@@ -1,4 +1,4 @@
-const API_KEY = 'NTD34FX29THIUPTF'; // Inserisci la tua API key di Alpha Vantage qui!!!
+const API_KEY = 'GAIXK9QTGAYHYHVJ'; // Inserisci la tua API key di Alpha Vantage qui!!!
 const SYMBOL = 'XAU'; // Simbolo di XAU (Oro) per Alpha Vantage (per la cronologia)
 const TIME_PERIOD = 20; // Periodo per le medie mobili e RSI
 const TAKE_PROFIT_PERCENT = 0.02; // 2% take profit
